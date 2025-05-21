@@ -35,14 +35,17 @@ count_cell(_,1).
 
 % base function used in snake predicate
 checkRowClues([],[]).
-checkRowClues([R|RS],[-1|CS]) :- checkColClues(RS,CS).
+checkRowClues([R|RS],[-1|CS]) :- checkRowClues(RS,CS).
 checkRowClues([R|RS],[C|CS]) :- count_parts_in_row(R,Count), 
                                 Count is C,
-                                checkColClues(RS,CS).
+                                checkRowClues(RS,CS).
 
 % actual stuff
 count_parts_in_row([],0).
-count_parts_in_row([X|XS],C+1) :- X > 0, count_parts_in_row(XS,C).
+count_parts_in_row([X|XS],CP1) :- integer(X),
+                                X > 0, % prevent _ values
+                                count_parts_in_row(XS,C), 
+                                CP1 is C+1.
 count_parts_in_row([_|XS],C) :- count_parts_in_row(XS,C).
 
 
@@ -52,23 +55,52 @@ checkColClues(S,C) :- doesAllColCluesMatch(S,C,0).
 
 % actual stuff
 doesAllColCluesMatch(S,[],_).
-doesAllColCluesMatch(S,[C|CS],Col_Index) :- count_parts_in_col(S,Col_Index,Count), 
+doesAllColCluesMatch(S,[C|CS],Col_Index) :- C > 0,
+                                            count_parts_in_col(S,Col_Index,Count), 
                                             Count is C,
-                                            colClues(S,CS,Col_Index+1).
+                                            Next_Col_Index is Col_Index + 1,
+                                            doesAllColCluesMatch(S, CS, Next_Col_Index).
+% in case of absence of clue (-1)
+doesAllColCluesMatch(S,[-1|CS],Col_Index) :- Next_Col_Index is Col_Index + 1,
+                                            doesAllColCluesMatch(S, CS, Next_Col_Index).
 
 % how are we supposed to sum on columns ????
 % nevermind
 count_parts_in_col([],_,0).
 
-count_parts_in_col([R|RS],Col_Index,Count+1) :- nth0(R,Col_Index,Cell_Value),
+count_parts_in_col([R|RS],Col_Index,CP1) :- nth0(Col_Index,R,Cell_Value),
+                                                integer(Cell_Value), % prevent _ values
                                                 Cell_Value > 0,
-                                                count_parts_in_col(RS,Col_Index,Count).
-% kill myself
+                                                count_parts_in_col(RS,Col_Index,Count),
+                                                CP1 is Count+1.
 
 count_parts_in_col([R|RS],Col_Index,Count) :- count_parts_in_col(RS,Col_Index,Count).
-
 
 
 %
 % END OF SHI TO TEST
 %
+
+copyGrid([],[]).
+copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
+copyRow([],[]).
+
+
+copyRow([-1|R],[_|S]) :- copyRow(R,S).
+copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
+
+%
+test1(S) :- copyGrid([[ 1, 1],[-1,-1]],S),
+            testRowRules([-1,-1],S), 
+            testColRules([-1,-1],S), 
+            print_only_grid(S).
+
+
+test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
+            print_only_grid(S),
+            nl,
+            testRowRules([ 1,-1,-1],S), 
+            testColRules([ 2,-1,-1],S), 
+            print_only_grid(S).
+testRowRules(Rowh,S) :- checkRowClues(S,Rowh).
+testColRules(Colh,S) :- checkColClues(S,Colh).
