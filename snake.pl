@@ -7,28 +7,6 @@
 %use_module(library(clpfd)).
 %set_prolog_flag(clpfd_monotonic, true). % setting to get useful errors sometimes
 
-check_neighbors_pattern(0,_,_,_,_).
-check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,
-    count_cell(N,X1),
-    count_cell(E,X2),
-    count_cell(S,X3),
-    count_cell(W,X4),
-    Piece #= X1+X2+X3+X4.
-
-
-% scan the grid rows 3 by 3 and check the neighbors of each middle case of row B
-% then put the count variable in the actual grid case that was scanned ( so will mostly put 2,0 or 1)
-% this do not check diagonals
-% rowA  #?#
-% rowB  ?*?
-% rowC  #?#
-check_neighbors_rows([_,N,A3|RowA],[W,M,E|RowB],[_,S,C3|RowC]) :-
-    check_neighbors_pattern(M,N,E,S,W),
-    check_neighbors_rows([N,A3|RowA],[M,E|RowB],[S,C3|RowC]).
-
-% base case
-check_neighbors_rows([_,A2],[B1,B2],[_,C2]) :- check_neighbors_pattern(B2,A2,0,C2,B1).
-
 
 
 %
@@ -89,11 +67,12 @@ count_parts_in_col([R|RS],Col_Index,Count) :- count_parts_in_col(RS,Col_Index,Co
 
 
 snake(RowClues, ColClues, Grid, Solution)
-:- copyGrid(Grid,Solution)
+:- copyGrid(Grid,Solution),
+    extend_grid(Solution, Extended)
 % , checkRowClues(Solution,RowClues)
 % , checkColClues(Solution,ColClues)
 %, nonTouching(Solution) % snake cannot touch itself
-%, countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
+, countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
 

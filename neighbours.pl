@@ -1,3 +1,47 @@
-countNeighbors([Row1, Row2, Row3 | Rows]) :- 
+ extend_grid(OldGrid,NewGrid) :-
+    transpose(OldGrid,TransGrid),
+    extend_grid_rows(TransGrid,RowTransGrid),
+    transpose(RowTransGrid,RowGrid),
+    extend_grid_rows(RowGrid,NewGrid).
 
-countNeighbors([Row1, Row2]) :- countNeighbors(Row1, Row2,)
+%base case
+extend_grid_rows([Row], [NewGrid]) :-
+    extend_row(Row, NewGrid). 
+
+extend_grid_rows([Row1 | Rows], [NewRow1 | NewRows]) :-
+    extend_row(Row1, NewRow1),
+    extend_grid_rows(Rows, NewRows).
+
+
+% Extend a row by adding a 0 at both ends
+extend_row(OldRow,NewRow) :- append([0|OldRow],[0],NewRow).
+
+check_neighbors_pattern(0,_,_,_,_).
+check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,
+    count_cell(N,X1),
+    count_cell(E,X2),
+    count_cell(S,X3),
+    count_cell(W,X4), !,
+    Piece #= X1+X2+X3+X4.
+
+
+% scan the grid rows 3 by 3 and check the neighbors of each middle case of row B
+% then put the count variable in the actual grid case that was scanned ( so will mostly put 2,0 or 1)
+% this do not check diagonals
+% rowA  #?#
+% rowB  ?*?
+% rowC  #?#
+
+%base
+check_neighbors_rows([_,A2], [B1,B2], [_, C2]) :-
+    check_neighbors_pattern(B2, A2, 0, C2, B1).
+
+check_neighbors_rows([_,N,A3|RowA],[W,M,E|RowB],[_,S,C3|RowC]) :-
+    check_neighbors_pattern(M,N,E,S,W),
+    check_neighbors_rows([N,A3|RowA],[M,E|RowB],[S,C3|RowC]).
+
+countNeighbors([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
+
+countNeighbors([Row1, Row2, Row3 | Rows]) :-
+    check_neighbors_rows(Row1, Row2, Row3),
+    countNeighbors([Row2, Row3 | Rows]).
