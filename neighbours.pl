@@ -12,9 +12,28 @@ extend_grid_rows([Row1 | Rows], [NewRow1 | NewRows]) :-
     extend_row(Row1, NewRow1),
     extend_grid_rows(Rows, NewRows).
 
-
 % Extend a row by adding a 0 at both ends
 extend_row(OldRow,NewRow) :- append([0|OldRow],[0],NewRow).
+
+undo_extend(OldGrid, NewGrid) :-
+    undo_extend_rows(OldGrid, RowGrid),
+    transpose(RowGrid, RowTransGrid),
+    undo_extend_rows(RowTransGrid, TransGrid),
+    transpose(TransGrid, NewGrid).
+
+%base case
+undo_extend_rows([Row], [NewGrid]) :-
+    undo_extend_row(Row, NewGrid).
+
+undo_extend_rows([Row1 | Rows], [NewRow1 | NewRows]) :-
+    undo_extend_row(Row1, NewRow1),
+    undo_extend_rows(Rows, NewRows).
+
+undo_extend_row([0 | TailRow], NewRow) :- deleteLastElement(TailRow, NewRow). 
+
+deleteLastElement(TailRow, NewRow) :- 
+    reverse(TailRow, [0|ReverseRow]),
+    reverse(ReverseRow, NewRow).
 
 check_neighbors_pattern(0,_,_,_,_).
 check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,

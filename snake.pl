@@ -72,7 +72,7 @@ snake(RowClues, ColClues, Grid, Solution)
 % , checkRowClues(Solution,RowClues)
 % , checkColClues(Solution,ColClues)
 %, nonTouching(Solution) % snake cannot touch itself
-, countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
+, countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
 
