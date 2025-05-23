@@ -6,10 +6,10 @@ nonTouching([Row1, Row2 | Rows]) :-
     nonTouching([Row2 | Rows]).
 
 %base case
-nonTouching_rows([A1, A2], [B1, B2]) :- valid_4_grid([[A1, A2], [B1, B2]]).
+nonTouching_rows([A1, A2], [B1, B2]) :- valid_4_grid([[A1, A2], [B1, B2]]), !.
 
 nonTouching_rows([A1, A2 | AList], [B1, B2 | BList]) :- 
-    valid_4_grid([[A1, A2], [B1, B2]]),
+    valid_4_grid([[A1, A2], [B1, B2]]), !,
     nonTouching_rows([A2 | Alist], [B2 | Blist]).
 
 valid_4_grid([[0,1], [2,2]]).
