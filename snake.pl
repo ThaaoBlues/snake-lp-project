@@ -22,7 +22,7 @@ snake(RowClues, ColClues, Grid, Solution):-
     ,maplist(label,Solution) % force variable instanciation
     ,checkRowClues(Solution,RowClues)
     ,checkColClues(Solution,ColClues)
-%, nonTouching(Solution) % snake cannot touch itself
+% , nonTouching(Solution) % snake cannot touch itself
 % countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
