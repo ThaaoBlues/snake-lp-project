@@ -1,4 +1,4 @@
- extend_grid(OldGrid,NewGrid) :-
+extend_grid(OldGrid,NewGrid) :-
     transpose(OldGrid,TransGrid),
     extend_grid_rows(TransGrid,RowTransGrid),
     transpose(RowTransGrid,RowGrid),

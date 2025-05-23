@@ -1,5 +1,6 @@
 [tests].
 [neighbours].
+[touching].
 
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
@@ -71,8 +72,8 @@ snake(RowClues, ColClues, Grid, Solution)
     extend_grid(Solution, Extended)
 % , checkRowClues(Solution,RowClues)
 % , checkColClues(Solution,ColClues)
-%, nonTouching(Solution) % snake cannot touch itself
-, countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
+, nonTouching(Solution) % snake cannot touch itself
+% , countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
 
