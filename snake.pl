@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-[tests].
-[neighbours].
-[touching].
-
-=======
 [neighbours, tests, checks].
->>>>>>> ab5540ce5c27b15e34eb562986474ea7eaf02b81
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
 %
@@ -25,17 +18,10 @@
 snake(RowClues, ColClues, Grid, Solution)
 :- copyGrid(Grid,Solution),
     extend_grid(Solution, Extended)
-<<<<<<< HEAD
-% , checkRowClues(Solution,RowClues)
-% , checkColClues(Solution,ColClues)
-, nonTouching(Solution) % snake cannot touch itself
-% , countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
-=======
  , checkRowClues(Solution,RowClues)
  , checkColClues(Solution,ColClues)
 %, nonTouching(Solution) % snake cannot touch itself
 , countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
->>>>>>> ab5540ce5c27b15e34eb562986474ea7eaf02b81
 %, snakeConnected(Solution) % snake must be connected
 .
 
