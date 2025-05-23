@@ -36,12 +36,14 @@ deleteLastElement(TailRow, NewRow) :-
     reverse(ReverseRow, NewRow).
 
 check_neighbors_pattern(0,_,_,_,_).
-check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,
+check_neighbors_pattern(Piece,N,E,S,W) :- 
     count_cell(N,X1),
     count_cell(E,X2),
     count_cell(S,X3),
     count_cell(W,X4),
-    Piece #= X1+X2+X3+X4.
+    count_piece_cell(Piece, P),
+    1 #=< P,
+    P #= X1+X2+X3+X4.
 
 
 % scan the grid rows 3 by 3 and check the neighbors of each middle case of row B
@@ -63,7 +65,7 @@ countNeighbors2([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
 
 countNeighbors2([Row1, Row2, Row3 | Rows]) :-
     check_neighbors_rows(Row1, Row2, Row3),
-    countNeighbors([Row2, Row3 | Rows]).
+    countNeighbors2([Row2, Row3 | Rows]).
 
 countNeighbors(Solution) :-
     extend_grid(Solution, Extended)
