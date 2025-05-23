@@ -8,7 +8,7 @@ checkRowClues([_|Rest_Of_Solution],[-1|Rest_Of_Hints]) :-
 
 % case with an hint for this row
 checkRowClues([Row|Rest_Of_Solution],[Hint|Rest_Of_Hints]) :- count_parts_in_row(Row,Count), 
-                                Count is Hint,
+                                Count #= Hint,
                                 checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
 
 % sum in row
@@ -18,7 +18,7 @@ count_parts_in_row([],0).
 
 count_parts_in_row([Cell_Value|Rest_Of_Row],CP1) :- 
                                 integer(Cell_Value), % requires integer to skip _ case
-                                Cell_Value > 0, % prevent _ values
+                                Cell_Value > 0, % prevent -1 values
                                 count_parts_in_row(Rest_Of_Row,Count), 
                                 CP1 is Count+1. % we found a cell containing a snake part,
                                                 % increment counter
@@ -39,12 +39,12 @@ doesAllColCluesMatch(_,[],_).
 doesAllColCluesMatch(S,[Hint|Rest_Of_Hints],Col_Index) :- 
                                     Hint > 0,
                                     count_parts_in_col(S,Col_Index,Count), 
-                                    Count is Hint,
+                                    Count #= Hint,
                                     Next_Col_Index is Col_Index + 1,
                                     doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
 
 % in case of absence of clue (-1), skip this (not so) hint
-doesAllColCluesMatch(S,[-1|Rest_Of_Hints],Col_Index) :- 
+doesAllColCluesMatch(S,[-1|Rest_Of_Hints],Col_Index) :-
                                     Next_Col_Index is Col_Index + 1,
                                     doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
 
@@ -60,7 +60,7 @@ count_parts_in_col([Row|Rest_Of_Solution],Col_Index,CP1) :-
                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count),
                                     CP1 is Count+1.
 % skip row if not
-count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :- 
+count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :-
                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count).
 
 
@@ -76,11 +76,10 @@ test1(S) :- copyGrid([[ 1, 1],[-1,-1]],S),
 
 % must have 1 on row 1 of the grid and 2 (one or 2) on the first column, multiple solutions
 test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
-            testRowRules([ 1,-1,-1],S), 
-            testColRules([ 2,-1,-1],S), 
-            print_only_grid(S).
+            print_only_grid(S),
+            nl,
+            checkRowClues(S,[ 1,-1,-1]), 
+            checkColClues(S,[ 2,-1,-1]),
+            print_only_grid(S),
+            nl.
 
-
-
-testRowRules(Rowh,S) :- checkRowClues(S,Rowh).
-testColRules(Colh,S) :- checkColClues(S,Colh).
