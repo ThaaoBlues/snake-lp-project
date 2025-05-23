@@ -19,7 +19,7 @@ count_cell(_,1).
 
 snake(RowClues, ColClues, Grid, Solution):- 
     copyGrid(Grid,Solution)
-    ,maplist(label,Solution)
+    ,maplist(label,Solution) % force variable instanciation
     %,extend_grid(Solution, Extended)
     ,checkRowClues(Solution,RowClues)
     ,checkColClues(Solution,ColClues)
