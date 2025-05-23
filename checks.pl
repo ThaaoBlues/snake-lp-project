@@ -1,12 +1,9 @@
-[tests].
-
-
 % base function used in snake predicate
 % enum and check rows
 checkRowClues([],[]).
 
 % skip case with no hint on row
-checkRowClues([Row|Rest_Of_Solution],[-1|Rest_Of_Hints]) :- 
+checkRowClues([_|Rest_Of_Solution],[-1|Rest_Of_Hints]) :- 
                 checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
 
 % case with an hint for this row
@@ -21,7 +18,7 @@ count_parts_in_row([],0).
 
 count_parts_in_row([Cell_Value|Rest_Of_Row],CP1) :- 
                                 integer(Cell_Value), % requires integer to skip _ case
-                                X > 0, % prevent _ values
+                                Cell_Value > 0, % prevent _ values
                                 count_parts_in_row(Rest_Of_Row,Count), 
                                 CP1 is Count+1. % we found a cell containing a snake part,
                                                 % increment counter
@@ -37,7 +34,7 @@ checkColClues(S,C) :- doesAllColCluesMatch(S,C,0).
 % requirements on cell sum on columns (match with clues)
 
 % enum columns
-doesAllColCluesMatch(S,[],_).
+doesAllColCluesMatch(_,[],_).
 
 doesAllColCluesMatch(S,[Hint|Rest_Of_Hints],Col_Index) :- 
                                     Hint > 0,
@@ -63,7 +60,7 @@ count_parts_in_col([Row|Rest_Of_Solution],Col_Index,CP1) :-
                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count),
                                     CP1 is Count+1.
 % skip row if not
-count_parts_in_col([Row|Rest_Of_Solution],Col_Index,Count) :- 
+count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :- 
                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count).
 
 
@@ -79,8 +76,6 @@ test1(S) :- copyGrid([[ 1, 1],[-1,-1]],S),
 
 % must have 1 on row 1 of the grid and 2 (one or 2) on the first column, multiple solutions
 test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
-            print_only_grid(S),
-            nl,
             testRowRules([ 1,-1,-1],S), 
             testColRules([ 2,-1,-1],S), 
             print_only_grid(S).
@@ -89,13 +84,3 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
 
 testRowRules(Rowh,S) :- checkRowClues(S,Rowh).
 testColRules(Colh,S) :- checkColClues(S,Colh).
-
-
-
-copyGrid([],[]).
-copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
-copyRow([],[]).
-
-
-copyRow([-1|R],[_|S]) :- copyRow(R,S).
-copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).

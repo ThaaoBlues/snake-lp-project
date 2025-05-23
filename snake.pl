@@ -1,7 +1,4 @@
-[tests].
-[neighbours].
-[checks].
-
+[neighbours, tests, checks].
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
 %
