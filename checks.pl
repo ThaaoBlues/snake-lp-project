@@ -76,10 +76,20 @@ test1(S) :- copyGrid([[ 1, 1],[-1,-1]],S),
 
 % must have 1 on row 1 of the grid and 2 (one or 2) on the first column, multiple solutions
 test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
-            print_only_grid(S),
-            nl,
+            maplist(label,S), % force variable instanciation
             checkRowClues(S,[ 1,-1,-1]), 
             checkColClues(S,[ 2,-1,-1]),
             print_only_grid(S),
             nl.
 
+
+copyGrid([],[]).
+copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
+copyRow([],[]).
+
+% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
+copyRow([-1|R],[Cell_Value|S]) :- 
+                                Cell_Value in 0 \/ 2
+                                ,copyRow(R,S)
+                                , !.
+copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
