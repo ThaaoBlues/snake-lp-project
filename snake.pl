@@ -5,6 +5,8 @@
 %use_module(library(clpfd)).
 %set_prolog_flag(clpfd_monotonic, true). % setting to get useful errors sometimes
 
+count_cell(0,0).
+count_cell(_,1).
 
 
 % TO IMPLEMENT
@@ -15,12 +17,13 @@
 % snakeConnected()
 
 
-snake(RowClues, ColClues, Grid, Solution)
-:- copyGrid(Grid,Solution)
-%  , checkRowClues(Solution,RowClues)
-%  , checkColClues(Solution,ColClues)
-, nonTouching(Solution) % snake cannot touch itself
-% , countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
+snake(RowClues, ColClues, Grid, Solution):- 
+    copyGrid(Grid,Solution)
+    ,maplist(label,Solution) % force variable instanciation
+    ,checkRowClues(Solution,RowClues)
+    ,checkColClues(Solution,ColClues)
+%, nonTouching(Solution) % snake cannot touch itself
+% countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
 
@@ -29,8 +32,11 @@ copyGrid([],[]).
 copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
 copyRow([],[]).
 
-
-copyRow([-1|R],[_|S]) :- copyRow(R,S), !.
+% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
+copyRow([-1|R],[Cell_Value|S]) :- 
+                                Cell_Value in 0 \/ 2
+                                ,copyRow(R,S)
+                                , !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
 
 count_cell(0,0).
