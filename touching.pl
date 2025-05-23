@@ -12,15 +12,53 @@ nonTouching_rows([A1, A2 | AList], [B1, B2 | BList]) :-
     valid_4_grid([[A1, A2], [B1, B2]]),
     nonTouching_rows([A2 | Alist], [B2 | Blist]).
 
-valid_4_grid(Grid4) :-
-    not_case1(Grid4),
-    not_case2(Grid4),
-    not_case3(Grid4),
-    not_case4(Grid4),
-    not_case5(Grid4),
-    not_case6(Grid4),
-    not_case7(Grid4).
-
+valid_4_grid([[0,1], [2,2]]).
+valid_4_grid([[0,2], [1,2]]).
+valid_4_grid([[0,2], [2,2]]).
+valid_4_grid([[1,0], [2,2]]).
+valid_4_grid([[2,0], [2,1]]).
+valid_4_grid([[2,0], [2,2]]).
+valid_4_grid([[1,2], [0,2]]).
+valid_4_grid([[2,2], [0,1]]).
+valid_4_grid([[2,2], [0,2]]).
+valid_4_grid([[2,2], [1,0]]).
+valid_4_grid([[2,2], [2,0]]).
+valid_4_grid([[2,1], [2,0]]).
+valid_4_grid([[2,2], [2,0]]).
+valid_4_grid([[0,1], [0,0]]).
+valid_4_grid([[0,2], [0,0]]).
+valid_4_grid([[0,0], [0,1]]).
+valid_4_grid([[0,0], [0,2]]).
+valid_4_grid([[1,0], [0,0]]).
+valid_4_grid([[2,0], [0,0]]).
+valid_4_grid([[1,0], [0,0]]).
+valid_4_grid([[0,0], [1,0]]).
+valid_4_grid([[0,0], [2,0]]).
+valid_4_grid([[0,0], [0,0]]).
+valid_4_grid([[0,2], [0,2]]).
+valid_4_grid([[0,1], [0,1]]).
+valid_4_grid([[0,1], [0,2]]).
+valid_4_grid([[0,2], [0,1]]).
+valid_4_grid([[0,0], [1,1]]).
+valid_4_grid([[0,0], [2,2]]).
+valid_4_grid([[0,0], [1,2]]).
+valid_4_grid([[0,0], [2,1]]).
+valid_4_grid([[1,0], [1,0]]).
+valid_4_grid([[2,0], [2,0]]).
+valid_4_grid([[1,0], [2,0]]).
+valid_4_grid([[2,0], [1,0]]).
+valid_4_grid([[1,1], [0,0]]).
+valid_4_grid([[2,2], [0,0]]).
+valid_4_grid([[1,2], [0,0]]).
+valid_4_grid([[2,1], [0,0]]).
+% valid_4_grid(Grid4) :-
+%     not_case1(Grid4),
+%     not_case2(Grid4),
+%     not_case3(Grid4),
+%     not_case4(Grid4),
+%     not_case5(Grid4),
+%     not_case6(Grid4),
+%     not_case7(Grid4).
 
 not_case1([[A1, A2], [B1, B2]]). % :-
    

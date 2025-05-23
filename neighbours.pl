@@ -40,7 +40,7 @@ check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,
     count_cell(N,X1),
     count_cell(E,X2),
     count_cell(S,X3),
-    count_cell(W,X4), !,
+    count_cell(W,X4),
     Piece #= X1+X2+X3+X4.
 
 
@@ -59,8 +59,13 @@ check_neighbors_rows([_,N,A3|RowA],[W,M,E|RowB],[_,S,C3|RowC]) :-
     check_neighbors_pattern(M,N,E,S,W),
     check_neighbors_rows([N,A3|RowA],[M,E|RowB],[S,C3|RowC]).
 
-countNeighbors([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
+countNeighbors2([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
 
-countNeighbors([Row1, Row2, Row3 | Rows]) :-
+countNeighbors2([Row1, Row2, Row3 | Rows]) :-
     check_neighbors_rows(Row1, Row2, Row3),
     countNeighbors([Row2, Row3 | Rows]).
+
+countNeighbors(Solution) :-
+    extend_grid(Solution, Extended)
+    , countNeighbors2(Extended)
+    , undo_extend(Extended, Solution).

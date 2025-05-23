@@ -39,3 +39,6 @@ copyRow([-1|R],[Cell_Value|S]) :-
                                 ,copyRow(R,S)
                                 , !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
+
+count_cell(0,0).
+count_cell(1,1).
