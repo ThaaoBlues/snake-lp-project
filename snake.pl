@@ -16,12 +16,11 @@
 
 
 snake(RowClues, ColClues, Grid, Solution)
-:- copyGrid(Grid,Solution),
-    extend_grid(Solution, Extended)
- , checkRowClues(Solution,RowClues)
- , checkColClues(Solution,ColClues)
-%, nonTouching(Solution) % snake cannot touch itself
-, countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
+:- copyGrid(Grid,Solution)
+%  , checkRowClues(Solution,RowClues)
+%  , checkColClues(Solution,ColClues)
+% , nonTouching(Solution) % snake cannot touch itself
+, countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
 %, snakeConnected(Solution) % snake must be connected
 .
 
@@ -33,3 +32,6 @@ copyRow([],[]).
 
 copyRow([-1|R],[_|S]) :- copyRow(R,S), !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
+
+count_cell(0,0).
+count_cell(1,1).
