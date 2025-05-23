@@ -5,8 +5,6 @@
 %use_module(library(clpfd)).
 %set_prolog_flag(clpfd_monotonic, true). % setting to get useful errors sometimes
 
-count_cell(0,0).
-count_cell(_,1).
 
 
 % TO IMPLEMENT
