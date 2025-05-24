@@ -69,16 +69,18 @@ count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :-
 
 % no hints
 test1(S) :- copyGrid([[ 1, 1],[-1,-1]],S),
-            testRowRules([-1,-1],S), 
-            testColRules([-1,-1],S), 
+            nonTouching(S),
+            % testRowRules([-1,-1],S), 
+            % testColRules([-1,-1],S), 
             print_only_grid(S).
 
 
 % must have 1 on row 1 of the grid and 2 (one or 2) on the first column, multiple solutions
 test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
-            maplist(label,S), % force variable instanciation
-            checkRowClues(S,[ 1,-1,-1]), 
-            checkColClues(S,[ 2,-1,-1]),
+            % maplist(label,S), % force variable instanciation
+            % checkRowClues(S,[ 1,-1,-1]), 
+            % checkColClues(S,[ 2,-1,-1]),
+            nonTouching(S),
             print_only_grid(S),
             nl.
 

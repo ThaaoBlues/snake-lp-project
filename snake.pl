@@ -20,9 +20,9 @@ snake(RowClues, ColClues, Grid, Solution):-
     % ,maplist(label,Solution) % force variable instanciation
     % ,checkRowClues(Solution,RowClues)
     % ,checkColClues(Solution,ColClues)
-, countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
-, nonTouching(Solution) % snake cannot touch itself
-%, snakeConnected(Solution) % snake must be connected
+    , nonTouching(Solution) % snake cannot touch itself
+    % , countNeighbors(Solution) % heads have 1 neighbor, midpoints 2
+    %, snakeConnected(Solution) % snake must be connected
 .
 
 
