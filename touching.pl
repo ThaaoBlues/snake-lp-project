@@ -7,7 +7,10 @@ nonTouching([Row1, Row2, Row3 | Rows]) :-
     nonTouching([Row2, Row3 | Rows]).
 
 %base case
-nonTouching_rows([A1, A2], [B1, B2]) :- valid_4_grid([[A1, A2], [B1, B2]]).
+nonTouching_rows([A1, A2], [B1, B2]) :- 
+    \+ diag_2_grid([[A1,A2],[B1,B2]]), % makes sure we have no diagonals constitued of 2s
+    \+ block_of_2([[A1,A2],[B1,B2]]), % no 4 block of 2s (technically induced by no diag ?)
+    nothing_in_diag_of_1([[A1,A2],[B1,B2]]). % no head/tail with something in diagonal
 
 nonTouching_rows([A1, A2, A3 | AList], [B1, B2, B3 | BList]) :- 
     %valid_4_grid([[A1, A2], [B1, B2]]),
@@ -21,10 +24,10 @@ nonTouching_rows([A1, A2, A3 | AList], [B1, B2, B3 | BList]) :-
 diag_2_grid([[_,2],[2,_]]).
 diag_2_grid([[2,_],[_,2]]).
 block_of_2([[2,2],[2,2]]).
-nothing_in_diag_of_1([[1,_],[_,B2]]) :- B2 = 0.
-nothing_in_diag_of_1([[_,1],[B1,_]]) :- B1 = 0.
-nothing_in_diag_of_1([[A1,_],[1,_]]) :- A1 = 0.
-nothing_in_diag_of_1([[_,A2],[_,1]]) :- A2 = 0.
+nothing_in_diag_of_1([[1,_],[_,0]]). 
+nothing_in_diag_of_1([[_,1],[0,_]]). 
+nothing_in_diag_of_1([[_,0],[1,_]]). 
+nothing_in_diag_of_1([[0,_],[_,1]]). 
 
 
 valid_4_grid([[0,1], [2,2]]).
