@@ -84,6 +84,9 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
             print_only_grid(S),
             nl.
 
+test(P, S)
+  :- puzzle(P,RowClues,ColClues,Grid)
+   , snake(RowClues,ColClues,Grid,S).
 
 copyGrid([],[]).
 copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
