@@ -25,8 +25,32 @@ snake(RowClues, ColClues, Grid, Solution):-
     %,! % no backtrack for easy testing (remove later)
     ,nonTouching(Solution) % snake cannot touch itself in diagonal
     ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
+    %,not_more_than_2_ends(Solution)
     %, snakeConnected(Solution) % snake must be connected
 .
+
+
+% the following predicate was for testing purposes, might be still useful sometimes
+
+% Predicate to check if 1 appears no more than twice in the entire grid
+not_more_than_2_ends(Solution) :-
+    count_total_ones(ListOfLists, TotalCount),
+    TotalCount #=< 2.
+
+% Helper predicate to count the total number of 1s in the entire grid
+count_total_ones([], 0).
+count_total_ones([Sublist | Rest], TotalCount) :-
+    count_ones(Sublist, Count),
+    count_total_ones(Rest, RestTotalCount),
+    TotalCount #= Count + RestTotalCount.
+
+% Helper predicate to count the number of 1s in a list
+count_ones([], 0).
+count_ones([1 | Rest], Count) :-
+    count_ones(Rest, RestCount),
+    Count #= RestCount + 1.
+count_ones([_ | Rest], Count) :-
+    count_ones(Rest, Count).
 
 
 copyGrid([],[]).
