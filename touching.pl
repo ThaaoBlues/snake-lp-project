@@ -24,10 +24,11 @@ nonTouching_rows([A1, A2, A3 | AList], [B1, B2, B3 | BList]) :-
 diag_2_grid([[_,2],[2,_]]).
 diag_2_grid([[2,_],[_,2]]).
 block_of_2([[2,2],[2,2]]).
-nothing_in_diag_of_1([[1,_],[_,0]]). 
-nothing_in_diag_of_1([[_,1],[0,_]]). 
-nothing_in_diag_of_1([[_,0],[1,_]]). 
-nothing_in_diag_of_1([[0,_],[_,1]]). 
+nothing_in_diag_of_1([[1,_],[_,X]]):- X in 0 \/ 2. % 1 can only have a body part or nothing as diagonal
+nothing_in_diag_of_1([[_,1],[X,_]]):- X in 0 \/ 2. 
+nothing_in_diag_of_1([[_,X],[1,_]]):- X in 0 \/ 2. 
+nothing_in_diag_of_1([[X,_],[_,1]]):- X in 0 \/ 2. 
+% accept the case where no 1 is on the 4x4 chunk
 nothing_in_diag_of_1([[A1,A2],[B1,B2]]) :- A1 #\=1, A2 #\=1, B1 #\=1, B2 #\=1.
 
 valid_4_grid([[0,1], [2,2]]).

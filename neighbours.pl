@@ -37,13 +37,14 @@ deleteLastElement(TailRow, NewRow) :-
 
 check_neighbors_pattern(0,_,_,_,_).
 check_neighbors_pattern(Piece,N,E,S,W) :- 
+    1 #=< Piece,
     count_cell(N,X1),
     count_cell(E,X2),
     count_cell(S,X3),
     count_cell(W,X4),
-    count_piece_cell(Piece, P),
-    1 #=< P,
-    P #= X1+X2+X3+X4.
+    %write(Piece),
+    %count_piece_cell(Piece, Max_Neighbours),
+    Piece #= X1+X2+X3+X4.
 
 
 % scan the grid rows 3 by 3 and check the neighbors of each middle case of row B
