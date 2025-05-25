@@ -1,6 +1,4 @@
-[tests].
-[neighbours].
-
+[neighbours, tests, checks].
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
 %
@@ -8,55 +6,6 @@
 %set_prolog_flag(clpfd_monotonic, true). % setting to get useful errors sometimes
 
 
-
-%
-% TO TEST
-%
-
-
-count_cell(0,0).
-count_cell(_,1).
-
-
-% base function used in snake predicate
-checkRowClues([],[]).
-checkRowClues([R|RS],[-1|CS]) :- checkColClues(RS,CS).
-checkRowClues([R|RS],[C|CS]) :- count_parts_in_row(R,Count), 
-                                Count is C,
-                                checkColClues(RS,CS).
-
-% actual stuff
-count_parts_in_row([],0).
-count_parts_in_row([X|XS],C+1) :- X > 0, count_parts_in_row(XS,C).
-count_parts_in_row([_|XS],C) :- count_parts_in_row(XS,C).
-
-
-% base function used in snake predicate
-
-checkColClues(S,C) :- doesAllColCluesMatch(S,C,0).
-
-% actual stuff
-doesAllColCluesMatch(S,[],_).
-doesAllColCluesMatch(S,[C|CS],Col_Index) :- count_parts_in_col(S,Col_Index,Count), 
-                                            Count is C,
-                                            colClues(S,CS,Col_Index+1).
-
-% how are we supposed to sum on columns ????
-% nevermind
-count_parts_in_col([],_,0).
-
-count_parts_in_col([R|RS],Col_Index,Count+1) :- nth0(R,Col_Index,Cell_Value),
-                                                Cell_Value > 0,
-                                                count_parts_in_col(RS,Col_Index,Count).
-% kill myself
-
-count_parts_in_col([R|RS],Col_Index,Count) :- count_parts_in_col(RS,Col_Index,Count).
-
-
-
-%
-% END OF SHI TO TEST
-%
 
 % TO IMPLEMENT
 % checkRowClues()
@@ -66,21 +15,58 @@ count_parts_in_col([R|RS],Col_Index,Count) :- count_parts_in_col(RS,Col_Index,Co
 % snakeConnected()
 
 
-snake(RowClues, ColClues, Grid, Solution)
-:- copyGrid(Grid,Solution),
-    extend_grid(Solution, Extended)
-% , checkRowClues(Solution,RowClues)
-% , checkColClues(Solution,ColClues)
-%, nonTouching(Solution) % snake cannot touch itself
-, countNeighbors(Extended) % heads have 1 neighbor, midpoints 2
-%, snakeConnected(Solution) % snake must be connected
+snake(RowClues, ColClues, Grid, Solution):- 
+    copyGrid(Grid,Solution)
+    ,maplist(label,Solution) % force variable instanciation
+    ,checkRowClues(Solution,RowClues)
+    ,checkColClues(Solution,ColClues)
+    %,! % no backtrack for easy testing (remove later)
+    ,nonTouching(Solution) % snake cannot touch itself in diagonal
+    ,print_only_grid(Solution)
+    ,nl
+    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
+    %,not_more_than_2_ends(Solution)
+    %, snakeConnected(Solution) % snake must be connected
 .
+
+
+% the following predicate was for testing purposes, might be still useful sometimes
+
+% Predicate to check if 1 appears no more than twice in the entire grid
+not_more_than_2_ends(Solution) :-
+    count_total_ones(ListOfLists, TotalCount),
+    TotalCount #=< 2.
+
+% Helper predicate to count the total number of 1s in the entire grid
+count_total_ones([], 0).
+count_total_ones([Sublist | Rest], TotalCount) :-
+    count_ones(Sublist, Count),
+    count_total_ones(Rest, RestTotalCount),
+    TotalCount #= Count + RestTotalCount.
+
+% Helper predicate to count the number of 1s in a list
+count_ones([], 0).
+count_ones([1 | Rest], Count) :-
+    count_ones(Rest, RestCount),
+    Count #= RestCount + 1.
+count_ones([_ | Rest], Count) :-
+    count_ones(Rest, Count).
 
 
 copyGrid([],[]).
 copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
 copyRow([],[]).
 
-
-copyRow([-1|R],[_|S]) :- copyRow(R,S), !.
+% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
+copyRow([-1|R],[Cell_Value|S]) :- 
+                                Cell_Value in 0 \/ 2
+                                ,copyRow(R,S)
+                                , !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
+
+count_cell(0,0).
+count_cell(1,1).
+count_cell(2,1).
+count_piece_cell(0,0).
+count_piece_cell(1,1).
+count_piece_cell(2,2).

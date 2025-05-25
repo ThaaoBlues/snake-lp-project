@@ -1,4 +1,4 @@
- extend_grid(OldGrid,NewGrid) :-
+extend_grid(OldGrid,NewGrid) :-
     transpose(OldGrid,TransGrid),
     extend_grid_rows(TransGrid,RowTransGrid),
     transpose(RowTransGrid,RowGrid),
@@ -36,11 +36,14 @@ deleteLastElement(TailRow, NewRow) :-
     reverse(ReverseRow, NewRow).
 
 check_neighbors_pattern(0,_,_,_,_).
-check_neighbors_pattern(Piece,N,E,S,W) :- 1 #=< Piece,
+check_neighbors_pattern(Piece,N,E,S,W) :- 
+    1 #=< Piece,
     count_cell(N,X1),
     count_cell(E,X2),
     count_cell(S,X3),
-    count_cell(W,X4), !,
+    count_cell(W,X4),
+    %write(Piece),
+    %count_piece_cell(Piece, Max_Neighbours),
     Piece #= X1+X2+X3+X4.
 
 
@@ -59,8 +62,13 @@ check_neighbors_rows([_,N,A3|RowA],[W,M,E|RowB],[_,S,C3|RowC]) :-
     check_neighbors_pattern(M,N,E,S,W),
     check_neighbors_rows([N,A3|RowA],[M,E|RowB],[S,C3|RowC]).
 
-countNeighbors([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
+countNeighbors2([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
 
-countNeighbors([Row1, Row2, Row3 | Rows]) :-
+countNeighbors2([Row1, Row2, Row3 | Rows]) :-
     check_neighbors_rows(Row1, Row2, Row3),
-    countNeighbors([Row2, Row3 | Rows]).
+    countNeighbors2([Row2, Row3 | Rows]).
+
+countNeighbors(Solution) :-
+    extend_grid(Solution, Extended)
+    , countNeighbors2(Extended)
+    , undo_extend(Extended, Solution).

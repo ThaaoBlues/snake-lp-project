@@ -1,0 +1,9 @@
+countNeighbors([[0,0,1],[2,2,2],[1,0,0]]).
+nonTouching([[0,0,1],[2,2,2],[1,0,0]]).
+[0,0,1]
+[2,2,2]
+[1,0,0]
+checkCorrect(p4x4).
+solvePuzzle(p4x4).
+solvePuzzle(p5x5a).
+solvePuzzle(p11x12).
