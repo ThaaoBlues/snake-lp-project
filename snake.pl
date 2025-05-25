@@ -17,14 +17,14 @@
 
 snake(RowClues, ColClues, Grid, Solution):- 
     copyGrid(Grid,Solution)
-    ,maplist(label,Solution) % force variable instanciation
-    ,checkRowClues(Solution,RowClues)
-    ,checkColClues(Solution,ColClues)
-    ,print_only_grid(Solution)
-    ,nl
+    % ,maplist(label,Solution) % force variable instanciation
+    % ,checkRowClues(Solution,RowClues)
+    % ,checkColClues(Solution,ColClues)
+    % ,print_only_grid(Solution)
+    % ,nl
     %,! % no backtrack for easy testing (remove later)
     ,nonTouching(Solution) % snake cannot touch itself in diagonal
-    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
+    % ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
     %,not_more_than_2_ends(Solution)
     %, snakeConnected(Solution) % snake must be connected
 .
