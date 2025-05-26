@@ -14,18 +14,23 @@
 % countNeighbors() % don't check diagonals
 % snakeConnected()
 
+:- dynamic(solution_cache/1).
+
+snake(S) :- solution_cache(S), !.
 
 snake(RowClues, ColClues, Grid, Solution):- 
     copyGrid(Grid,Solution)
-    ,maplist(label,Solution) % force variable instanciation
+    ,!
     ,checkRowClues(Solution,RowClues)
     ,checkColClues(Solution,ColClues)
     %,! % no backtrack for easy testing (remove later)
     ,nonTouching(Solution) % snake cannot touch itself in diagonal
+    %,assertz(solution_cache(S))
+    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
+     % force variable instanciation
+    ,maplist(label,Solution)
     ,print_only_grid(Solution)
     ,nl
-    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
-    ,!
     %,not_more_than_2_ends(Solution)
     %, snakeConnected(Solution) % snake must be connected
 .

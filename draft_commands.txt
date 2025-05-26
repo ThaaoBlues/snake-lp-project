@@ -9,4 +9,4 @@ solvePuzzle(p5x5a).
 solvePuzzle(p11x12).
 
 use_module(library(clpfd)).
-[neighbours, tests, checks, touching, snake].
+[neighbours, tests, checks, touching, connected, snake].

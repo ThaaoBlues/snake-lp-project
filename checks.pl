@@ -17,7 +17,7 @@ checkRowClues([Row|Rest_Of_Solution],[Hint|Rest_Of_Hints]) :- count_parts_in_row
 count_parts_in_row([],0).
 
 count_parts_in_row([Cell_Value|Rest_Of_Row],CP1) :- 
-                                Cell_Value > 0, % prevent null values
+                                Cell_Value #> 0, % prevent null values
                                 count_parts_in_row(Rest_Of_Row,Count), 
                                 CP1 is Count+1. % we found a cell containing a snake part,
                                                 % increment counter
@@ -53,7 +53,7 @@ count_parts_in_col([],_,0).
 % increment counter if we find snake part in the given cell
 count_parts_in_col([Row|Rest_Of_Solution],Col_Index,CP1) :- 
                                     nth0(Col_Index,Row,Cell_Value),            
-                                    Cell_Value > 0, % make sure non-0 value
+                                    Cell_Value #> 0, % make sure non-0 value
                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count),
                                     CP1 is Count+1.
 % skip row if not
