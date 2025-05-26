@@ -42,7 +42,7 @@ countHeadRow([1|Row], Count) :-
     Count is C + 1,
     Count #=< 2.
 countHeadRow([Val|Row], Count) :-
-    Val \= 1,
+    Val #\= 1,
     countHeadRow(Row, Count).
 
 checkRowClues([], []).
@@ -53,15 +53,14 @@ checkRowClues([Row|Grid], [Clue|Clues]) :-
     checkRowClues(Grid, Clues).
 
 countRow([], 0).
-countRow([1|Row], Count) :-
-    countRow(Row, C),
-    Count is C + 1.
-countRow([2|Row], Count) :-
-    countRow(Row, C),
-    Count is C + 1.
 countRow([Val|Row], Count) :-
-    Val \= 1,
-    Val \= 2,
+    ((Val #= 1) #\/ (Val #= 2))
+    countRow(Row, C),
+    Count is C + 1.
+
+
+countRow([Val|Row], Count) :-
+    Val #= 0,
     countRow(Row, Count).
 
 checkColClues([],[]).
