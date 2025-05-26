@@ -78,15 +78,3 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
              checkColClues(S,[ 2,-1,-1]),
             print_only_grid(S),
             nl.
-
-
-copyGrid([],[]).
-copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
-copyRow([],[]).
-
-% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
-copyRow([-1|R],[Cell_Value|S]) :- 
-                                Cell_Value in 0 \/ 2
-                                ,copyRow(R,S)
-                                , !.
-copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
