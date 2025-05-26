@@ -46,15 +46,15 @@ nextSnake(Grid, Visited, Current, [Current, cell(Xn,Yn,V)|Snake]) :-
 count([], 0).
 count([Row|Grid], Count) :-
     count(Grid, C),
-    countRow(Row, Cr),
+    rowCount(Row, Cr),
     Count is C + Cr.
 
-countRow([], 0).
-countRow([1|Row], Count) :- !,
-    countRow(Row, C),
+rowCount([], 0).
+rowCount([1|Row], Count) :- !,
+    rowCount(Row, C),
     Count is C + 1.
-countRow([2|Row], Count) :- !,
-    countRow(Row, C),
+rowCount([2|Row], Count) :- !,
+    rowCount(Row, C),
     Count is C + 1.
-countRow([_|Row], Count) :-
-    countRow(Row, Count).
+rowCount([_|Row], Count) :-
+    rowCount(Row, Count).
