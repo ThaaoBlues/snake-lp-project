@@ -25,6 +25,7 @@ snake(RowClues, ColClues, Grid, Solution):-
     ,print_only_grid(Solution)
     ,nl
     ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
+    ,!
     %,not_more_than_2_ends(Solution)
     %, snakeConnected(Solution) % snake must be connected
 .

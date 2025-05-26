@@ -7,3 +7,6 @@ checkCorrect(p4x4).
 solvePuzzle(p4x4).
 solvePuzzle(p5x5a).
 solvePuzzle(p11x12).
+
+use_module(library(clpfd)).
+[neighbours, tests, checks, touching, snake].
