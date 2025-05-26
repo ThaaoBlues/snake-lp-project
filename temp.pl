@@ -22,10 +22,8 @@ goodGrid([Row|Grid]) :-
     goodGrid(Grid).
 
 goodRow([]).
-goodRow([0|Row]) :- goodRow(Row).
-goodRow([1|Row]) :- goodRow(Row).
-goodRow([2|Row]) :- goodRow(Row).
-goodRow([Cell|Row]) :- Cell \= (0;1;2), fail.
+goodRow([Cell|Row]) :- ((Cell #=0) #\/ (Cell #=1) #\/ (Cell #=2)), goodRow(Row).
+%goodRow([Cell|Row]) :- %((Cell #\=0) #/\ (Cell #\=1) #/\ (Cell #\=2)), fail.
 
 checkHead(Grid) :- countHead(Grid, Count), Count = 2.
 
@@ -37,10 +35,12 @@ countHead([Row|Grid], Count) :-
     Count #=< 2.
 
 countHeadRow([],0).
-countHeadRow([1|Row], Count) :-
+countHeadRow([Cell|Row], Count) :-
+    Cell #= 1,
     countHeadRow(Row, C),
     Count is C + 1,
     Count #=< 2.
+    
 countHeadRow([Val|Row], Count) :-
     Val #\= 1,
     countHeadRow(Row, Count).
@@ -54,7 +54,7 @@ checkRowClues([Row|Grid], [Clue|Clues]) :-
 
 countRow([], 0).
 countRow([Val|Row], Count) :-
-    ((Val #= 1) #\/ (Val #= 2))
+    ((Val #= 1) #\/ (Val #= 2)),
     countRow(Row, C),
     Count is C + 1.
 

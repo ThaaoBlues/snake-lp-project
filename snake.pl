@@ -13,6 +13,37 @@
 % countNeighbors() % don't check diagonals
 % snakeConnected()
 
+
+
+goodGrid([]).
+goodGrid([Row|Grid]) :-
+    goodRow(Row),
+    goodGrid(Grid).
+
+goodRow([]).
+goodRow([Cell|Row]) :- ((Cell #=0) #\/ (Cell #=1) #\/ (Cell #=2)), goodRow(Row).
+%goodRow([Cell|Row]) :- %((Cell #\=0) #/\ (Cell #\=1) #/\ (Cell #\=2)), fail.
+
+checkHead(Grid) :- countHead(Grid, Count), Count = 2.
+
+countHead([],0).
+countHead([Row|Grid], Count) :-
+    countHead(Grid, C),
+    countHeadRow(Row, Cr),
+    Count is C + Cr,
+    Count #=< 2.
+
+countHeadRow([],0).
+countHeadRow([Cell|Row], Count) :-
+    Cell #= 1,
+    countHeadRow(Row, C),
+    Count is C + 1,
+    Count #=< 2.
+    
+countHeadRow([Val|Row], Count) :-
+    Val #\= 1,
+    countHeadRow(Row, Count).
+
 :- dynamic(solution_cache/2).
 
 snake(_,_,G,S) :-solution_cache(G,S),write("Cache hit\n").
@@ -20,6 +51,8 @@ snake(_,_,G,S) :-solution_cache(G,S),write("Cache hit\n").
 snake(RowClues, ColClues, Grid, Solution):-
     %write("copyGrid\n"),
     copyGrid(Grid, Solution),
+    goodGrid(Solution),
+    checkHead(Solution),
     %write("checkRowClues\n"),
     checkRowClues(Solution, RowClues),
     %write("checkColClues\n"),
@@ -31,10 +64,9 @@ snake(RowClues, ColClues, Grid, Solution):-
     %write("snakeConnected\n"),
     snakeConnected(Solution),
     %write("labeling\n"),
-    maplist(label, Solution),
-    \+ solution_cache(Grid,Solution),
-    assertz(solution_cache(Grid,Solution)),
-    print_only_grid(Solution), nl
+    maplist(label, Solution)
+    %\+ solution_cache(Grid,Solution),
+    %assertz(solution_cache(Grid,Solution)),
 .
 
 

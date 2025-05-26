@@ -63,25 +63,6 @@
 
 % testing if the predicates are leading to a solution meeting hints 
 
-
-checkHead(Grid) :- countHead(Grid, Count), Count = 2.
-
-countHead([],0).
-countHead([Row|Grid], Count) :-
-    countHead(Grid, C),
-    countHeadRow(Row, Cr),
-    Count is C + Cr,
-    Count #=< 2.
-
-countHeadRow([],0).
-countHeadRow([1|Row], Count) :-
-    countHeadRow(Row, C),
-    Count is C + 1,
-    Count #=< 2.
-countHeadRow([Val|Row], Count) :-
-    Val #\= 1,
-    countHeadRow(Row, Count).
-
 checkRowClues([], []).
 checkRowClues([_|Grid], [-1|Clues]) :- !, checkRowClues(Grid, Clues).
 checkRowClues([Row|Grid], [Clue|Clues]) :- 
