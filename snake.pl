@@ -1,4 +1,3 @@
-[neighbours, tests, checks].
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
 %
@@ -15,58 +14,79 @@
 % snakeConnected()
 
 
-snake(RowClues, ColClues, Grid, Solution):- 
-    copyGrid(Grid,Solution)
-    ,maplist(label,Solution) % force variable instanciation
-    ,checkRowClues(Solution,RowClues)
-    ,checkColClues(Solution,ColClues)
-    %,! % no backtrack for easy testing (remove later)
-    ,nonTouching(Solution) % snake cannot touch itself in diagonal
-    ,print_only_grid(Solution)
-    ,nl
-    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
-    %,not_more_than_2_ends(Solution)
-    %, snakeConnected(Solution) % snake must be connected
+
+goodGrid([]).
+goodGrid([Row|Grid]) :-
+    goodRow(Row),
+    goodGrid(Grid).
+
+goodRow([]).
+goodRow([Cell|Row]) :- ((Cell #=0) #\/ (Cell #=1) #\/ (Cell #=2)), goodRow(Row).
+%goodRow([Cell|Row]) :- %((Cell #\=0) #/\ (Cell #\=1) #/\ (Cell #\=2)), fail.
+
+checkHead(Grid) :- countHead(Grid, Count), Count = 2.
+
+countHead([],0).
+countHead([Row|Grid], Count) :-
+    countHead(Grid, C),
+    countHeadRow(Row, Cr),
+    Count is C + Cr,
+    Count #=< 2.
+
+countHeadRow([],0).
+countHeadRow([Cell|Row], Count) :-
+    Cell #= 1,
+    countHeadRow(Row, C),
+    Count is C + 1,
+    Count #=< 2.
+    
+countHeadRow([Val|Row], Count) :-
+    Val #\= 1,
+    countHeadRow(Row, Count).
+
+:- dynamic(solution_cache/2).
+
+snake(_,_,G,S) :-solution_cache(G,S),write("Cache hit\n").
+
+snake(RowClues, ColClues, Grid, Solution):-
+    %write("copyGrid\n"),
+    copyGrid(Grid, Solution),
+    goodGrid(Solution),
+    checkHead(Solution),
+    %write("checkRowClues\n"),
+    checkRowClues(Solution, RowClues),
+    %write("checkColClues\n"),
+    checkColClues(Solution, ColClues),
+    %write("nonTouching\n"),
+    nonTouching(Solution),
+    %write("countNeighbors\n"),
+    countNeighbors(Solution),
+    %write("snakeConnected\n"),
+    snakeConnected(Solution),
+    %write("labeling\n"),
+    maplist(label, Solution)
+    %\+ solution_cache(Grid,Solution),
+    %assertz(solution_cache(Grid,Solution)),
 .
-
-
-% the following predicate was for testing purposes, might be still useful sometimes
-
-% Predicate to check if 1 appears no more than twice in the entire grid
-not_more_than_2_ends(Solution) :-
-    count_total_ones(ListOfLists, TotalCount),
-    TotalCount #=< 2.
-
-% Helper predicate to count the total number of 1s in the entire grid
-count_total_ones([], 0).
-count_total_ones([Sublist | Rest], TotalCount) :-
-    count_ones(Sublist, Count),
-    count_total_ones(Rest, RestTotalCount),
-    TotalCount #= Count + RestTotalCount.
-
-% Helper predicate to count the number of 1s in a list
-count_ones([], 0).
-count_ones([1 | Rest], Count) :-
-    count_ones(Rest, RestCount),
-    Count #= RestCount + 1.
-count_ones([_ | Rest], Count) :-
-    count_ones(Rest, Count).
 
 
 copyGrid([],[]).
 copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
 copyRow([],[]).
 
-% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
+% constraint the values
 copyRow([-1|R],[Cell_Value|S]) :- 
                                 Cell_Value in 0 \/ 2
                                 ,copyRow(R,S)
                                 , !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
 
-count_cell(0,0).
-count_cell(1,1).
-count_cell(2,1).
-count_piece_cell(0,0).
-count_piece_cell(1,1).
-count_piece_cell(2,2).
+%count_cell(0,0).
+%count_cell(1,1).
+%count_cell(2,1).
+count_cell(Cell, Count) :-
+    % Count is 1 if Cell is 1 or 2, else 0
+    % that's so fancy we have <==> to mean if and only if
+    B1 #<==> (Cell #= 1),
+    B2 #<==> (Cell #= 2),
+    Count #= B1 + B2.

@@ -1,67 +1,90 @@
-% base function used in snake predicate
-% enum and check rows
-checkRowClues([],[]).
+% % base function used in snake predicate
+% % enum and check rows
+% checkRowClues([],[]).
 
-% skip case with no hint on row
-checkRowClues([_|Rest_Of_Solution],[-1|Rest_Of_Hints]) :- 
-                checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
+% % skip case with no hint on row
+% checkRowClues([_|Rest_Of_Solution],[-1|Rest_Of_Hints]) :- 
+%                 checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
 
-% case with an hint for this row
-checkRowClues([Row|Rest_Of_Solution],[Hint|Rest_Of_Hints]) :- count_parts_in_row(Row,Count), 
-                                Count #= Hint,
-                                checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
+% % case with an hint for this row
+% checkRowClues([Row|Rest_Of_Solution],[Hint|Rest_Of_Hints]) :- count_parts_in_row(Row,Count), 
+%                                 Count #= Hint,
+%                                 checkRowClues(Rest_Of_Solution,Rest_Of_Hints).
 
-% sum in row
+% % sum in row
 
-% base case, end of row
-count_parts_in_row([],0).
+% % base case, end of row
+% count_parts_in_row([],0).
 
-count_parts_in_row([Cell_Value|Rest_Of_Row],CP1) :- 
-                                Cell_Value > 0, % prevent null values
-                                count_parts_in_row(Rest_Of_Row,Count), 
-                                CP1 is Count+1. % we found a cell containing a snake part,
-                                                % increment counter
+% count_parts_in_row([Cell_Value|Rest_Of_Row],CP1) :- 
+%                                 Cell_Value #> 0, % prevent null values
+%                                 count_parts_in_row(Rest_Of_Row,Count), 
+%                                 CP1 is Count+1. % we found a cell containing a snake part,
+%                                                 % increment counter
 
-% case without snake in the Cell, do not increment the counter and skip to next iteration
-count_parts_in_row([_|Rest_Of_Row],Count) :- count_parts_in_row(Rest_Of_Row,Count).
+% % case without snake in the Cell, do not increment the counter and skip to next iteration
+% count_parts_in_row([_|Rest_Of_Row],Count) :- count_parts_in_row(Rest_Of_Row,Count).
 
 
-% base function used in snake predicate
+% % base function used in snake predicate
 
-checkColClues(S,C) :- doesAllColCluesMatch(S,C,0).
+% checkColClues(S,C) :- doesAllColCluesMatch(S,C,0).
 
-% requirements on cell sum on columns (match with clues)
+% % requirements on cell sum on columns (match with clues)
 
-% enum columns
-doesAllColCluesMatch(_,[],_).
+% % enum columns
+% doesAllColCluesMatch(_,[],_).
 
-doesAllColCluesMatch(S,[Hint|Rest_Of_Hints],Col_Index) :- 
-                                    count_parts_in_col(S,Col_Index,Count), 
-                                    Count #= Hint,
-                                    Next_Col_Index is Col_Index + 1,
-                                    doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
+% doesAllColCluesMatch(S,[Hint|Rest_Of_Hints],Col_Index) :- 
+%                                     count_parts_in_col(S,Col_Index,Count), 
+%                                     Count #= Hint,
+%                                     Next_Col_Index is Col_Index + 1,
+%                                     doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
 
-% in case of absence of clue (-1), skip this (not so) hint
-doesAllColCluesMatch(S,[-1|Rest_Of_Hints],Col_Index) :-
-                                    Next_Col_Index is Col_Index + 1,
-                                    doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
+% % in case of absence of clue (-1), skip this (not so) hint
+% doesAllColCluesMatch(S,[-1|Rest_Of_Hints],Col_Index) :-
+%                                     Next_Col_Index is Col_Index + 1,
+%                                     doesAllColCluesMatch(S, Rest_Of_Hints, Next_Col_Index).
 
-% sum in a column
-% base case, no more rows to check
-count_parts_in_col([],_,0).
+% % sum in a column
+% % base case, no more rows to check
+% count_parts_in_col([],_,0).
 
-% increment counter if we find snake part in the given cell
-count_parts_in_col([Row|Rest_Of_Solution],Col_Index,CP1) :- 
-                                    nth0(Col_Index,Row,Cell_Value),            
-                                    Cell_Value > 0, % make sure non-0 value
-                                    count_parts_in_col(Rest_Of_Solution,Col_Index,Count),
-                                    CP1 is Count+1.
-% skip row if not
-count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :-
-                                    count_parts_in_col(Rest_Of_Solution,Col_Index,Count).
+% % increment counter if we find snake part in the given cell
+% count_parts_in_col([Row|Rest_Of_Solution],Col_Index,CP1) :- 
+%                                     nth0(Col_Index,Row,Cell_Value),            
+%                                     Cell_Value #> 0, % make sure non-0 value
+%                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count),
+%                                     CP1 is Count+1.
+% % skip row if not
+% count_parts_in_col([_|Rest_Of_Solution],Col_Index,Count) :-
+%                                     count_parts_in_col(Rest_Of_Solution,Col_Index,Count).
 
 
 % testing if the predicates are leading to a solution meeting hints 
+
+checkRowClues([], []).
+checkRowClues([_|Grid], [-1|Clues]) :- !, checkRowClues(Grid, Clues).
+checkRowClues([Row|Grid], [Clue|Clues]) :- 
+    countRow(Row, Count),
+    Count #= Clue,
+    checkRowClues(Grid, Clues).
+
+countRow([], 0).
+countRow([Val|Row], Count) :-
+    ((Val #= 1) #\/ (Val #= 2)),
+    countRow(Row, C),
+    Count is C + 1.
+
+
+countRow([Val|Row], Count) :-
+    Val #= 0,
+    countRow(Row, Count).
+
+checkColClues([],[]).
+checkColClues(Grid, Clues) :-
+    transpose(Grid, Trans),
+    checkRowClues(Trans, Clues).
 
 
 % no hints
@@ -78,18 +101,3 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
              checkColClues(S,[ 2,-1,-1]),
             print_only_grid(S),
             nl.
-
-test(P, S)
-  :- puzzle(P,RowClues,ColClues,Grid)
-   , snake(RowClues,ColClues,Grid,S).
-
-copyGrid([],[]).
-copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
-copyRow([],[]).
-
-% constraint the value to be 0 or 2 when it is not 1 (the head/tail are given)
-copyRow([-1|R],[Cell_Value|S]) :- 
-                                Cell_Value in 0 \/ 2
-                                ,copyRow(R,S)
-                                , !.
-copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
