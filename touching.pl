@@ -31,11 +31,11 @@ block_of_2([[A,B],[C,D]]) :- ( (A #\= 2) #\/ (B #\= 2) #\/ (C #\= 2) #\/ (D #\= 
 % ==> means if left hand side then right hand side
 nothing_in_diag_of_1([[A1, A2], [B1, B2]]) :-
     % Diagonals: A1-B2 and A2-B1
-    ((A1 #= 1) #==> (B2 in 0 \/ 2)),
-    ((A2 #= 1) #==> (B1 in 0 \/ 2)),
-    ((B1 #= 1) #==> (A2 in 0 \/ 2)),
-    ((B2 #= 1) #==> (A1 in 0 \/ 2)).
-
+    ((A1 #= 1) #/\ (A2 #= 0) #/\ (B1 #= 0) #==> (B2 #= 0)),
+    ((A2 #= 1) #/\ (A1 #= 0) #/\ (B2 #= 0) #==> (B1 #= 0)),
+    ((B1 #= 1) #/\ (A1 #= 0) #/\ (B2 #= 0) #==> (A2 #= 0)),
+    ((B2 #= 1) #/\ (A2 #= 0) #/\ (B1 #= 0) #==> (A1 #= 0))
+    .
 
 % accept the case where no 1 is on the 4x4 chunk
 nothing_in_diag_of_1([[A1,A2],[B1,B2]]) :- A1 #\=1, A2 #\=1, B1 #\=1, B2 #\=1.
