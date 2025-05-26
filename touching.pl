@@ -1,4 +1,4 @@
-%base case
+% base case
 
 nonTouching([Row1, Row2]) :- nonTouching_rows(Row1, Row2), !.
 
