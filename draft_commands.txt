@@ -5,7 +5,7 @@ nonTouching([[0,0,1],[2,2,2],[1,0,0]]).
 [1,0,0]
 checkCorrect(p4x4).
 solvePuzzle(p4x4).
-solvePuzzle(p5x5a).
+solvePuzzle(p5x5b).
 solvePuzzle(p11x12).
 
 use_module(library(clpfd)).

@@ -47,6 +47,7 @@ check_neighbors_pattern(Piece,N,E,S,W) :-
     Piece #= X1+X2+X3+X4.
 
 
+
 % scan the grid rows 3 by 3 and check the neighbors of each middle case of row B
 % then put the count variable in the actual grid case that was scanned ( so will mostly put 2,0 or 1)
 % this do not check diagonals
@@ -68,7 +69,9 @@ countNeighbors2([Row1, Row2, Row3 | Rows]) :-
     check_neighbors_rows(Row1, Row2, Row3),
     countNeighbors2([Row2, Row3 | Rows]).
 
+
 countNeighbors(Solution) :-
     extend_grid(Solution, Extended)
     , countNeighbors2(Extended)
-    , undo_extend(Extended, Solution).
+    , undo_extend(Extended, Solution)
+    .

@@ -1,4 +1,3 @@
-[neighbours, tests, checks].
 %
 % PASTE THIS TWO LINES IN SWIPL BEFORE
 %
@@ -18,21 +17,22 @@
 
 snake(S) :- solution_cache(S), !.
 
-snake(RowClues, ColClues, Grid, Solution):- 
-    copyGrid(Grid,Solution)
-    ,!
-    ,checkRowClues(Solution,RowClues)
-    ,checkColClues(Solution,ColClues)
-    %,! % no backtrack for easy testing (remove later)
-    ,nonTouching(Solution) % snake cannot touch itself in diagonal
-    %,assertz(solution_cache(S))
-    ,countNeighbors(Solution) % heads have 1 neighbor, midpoints 2 ( => no touch everywhere else than diagonal)
-     % force variable instanciation
-    ,maplist(label,Solution)
-    ,print_only_grid(Solution)
-    ,nl
-    %,not_more_than_2_ends(Solution)
-    %, snakeConnected(Solution) % snake must be connected
+snake(RowClues, ColClues, Grid, Solution):-
+    write("copyGrid\n"),
+    copyGrid(Grid, Solution),
+    write("checkRowClues\n"),
+    checkRowClues(Solution, RowClues),
+    write("checkColClues\n"),
+    checkColClues(Solution, ColClues),
+    write("nonTouching\n"),
+    nonTouching(Solution),
+    write("countNeighbors\n"),
+    countNeighbors(Solution),
+    write("snakeConnected\n"),
+    snakeConnected(Solution),
+    write("labeling\n"),
+    maplist(label, Solution),
+    print_only_grid(Solution), nl
 .
 
 
