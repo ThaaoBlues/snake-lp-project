@@ -6,6 +6,7 @@ solvePuzzle(p4x4).
 solvePuzzle(p5x5b).
 solvePuzzle(p11x12).
 
-retractall(solution_cache(_,_)).
+retractall(cache_solution(_,_)).
 use_module(library(clpfd)).
 [neighbours, tests, checks, touching, connected, snake].
+time(solvePuzzle(p5x5_two)).

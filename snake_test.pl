@@ -1,6 +1,7 @@
 %
 % CHECKING CLUES PART
 %
+
 checkRowClues([], []).
 checkRowClues([_|Grid], [-1|Clues]) :- !, checkRowClues(Grid, Clues).
 checkRowClues([Row|Grid], [Clue|Clues]) :- 
@@ -10,9 +11,9 @@ checkRowClues([Row|Grid], [Clue|Clues]) :-
 
 countRow([], 0).
 countRow([Val|Row], Count) :-
-    ((Val #= 1) #\/ (Val #= 2)),
     countRow(Row, C),
-    Count is C + 1.
+    B #<==> (Val #= 1 #\/ Val #= 2),
+    Count #= C + B.
 
 
 countRow([Val|Row], Count) :-
@@ -40,7 +41,6 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
             print_only_grid(S),
             nl.
 
-
 %
 % END OF CHECKING CLUES PART
 %
@@ -49,14 +49,13 @@ test2(S) :- copyGrid([[-1,-1, 1],[-1,-1,-1],[ 1,-1,-1]],S),
 % SNAKE CONNECTED PART
 %
 
-
 snakeConnected(Solution) :-
     getHead(Solution, H),
     nextSnake(Solution, [], H, Path),
     length(Path, Length),
-    Snake is Length,
+    Snake #= Length,
     count(Solution, Count),
-    Snake = Count, !.
+    Snake #= Count, !.
 
 head(cell(_,_,1)).
 
@@ -69,23 +68,40 @@ getValue(Grid, cell(X,Y,V)) :-
     nth0(X, Row, V), !.
 
 neighboring(cell(Xc,Y,_), cell(Xn,Y,_)) :-
-    Xn is Xc + 1;
-    Xn is Xc - 1.
+    Xn #= Xc + 1;
+    Xn #= Xc - 1.
 
 neighboring(cell(X,Yc,_), cell(X,Yn,_)) :-
-    Yn is Yc + 1;
-    Yn is Yc - 1.
+    Yn #= Yc + 1;
+    Yn #= Yc - 1.
 
-nextSnake(Grid, _, Cell, [Cell]) :- 
-    head(Cell), 
-    getHead(Grid, H),
-    not(Cell = H), !.
-nextSnake(Grid, Visited, Current, [Current, cell(Xn,Yn,V)|Snake]) :-
-    neighboring(Current, cell(Xn,Yn,V)),
-    getValue(Grid, cell(Xn, Yn, V)),
-    (V = 1 ; V = 2),
-    not(member(cell(Xn,Yn,V), Visited)),
-    nextSnake(Grid, [Current|Visited], cell(Xn,Yn,V), [cell(Xn,Yn,V)|Snake]).
+% nextSnake(Grid, _, Cell, [Cell]) :- 
+%     head(Cell), 
+%     getHead(Grid, H),
+%     not(Cell = H), !.
+% nextSnake(Grid, Visited, Current, [Current, cell(Xn,Yn,V)|Snake]) :-
+%     neighboring(Current, cell(Xn,Yn,V)),
+%     getValue(Grid, cell(Xn, Yn, V)),
+%     (V = 1 ; V = 2),
+%     not(member(cell(Xn,Yn,V), Visited)),
+%     nextSnake(Grid, [Current|Visited], cell(Xn,Yn,V), [cell(Xn,Yn,V)|Snake]).
+
+% Base case: no next neighbors to continue the snake
+nextSnake(Grid, Visited, Current, [Current]) :-
+    \+ (neighboring(Current, Next),
+        getValue(Grid, Next),
+        (Next = cell(_,_,1) ; Next = cell(_,_,2)),
+        \+ member(Next, Visited)),
+    !.
+
+% Recursive case: follow snake neighbors
+nextSnake(Grid, Visited, Current, [Current|Rest]) :-
+    neighboring(Current, Next),
+    getValue(Grid, Next),
+    (Next = cell(_,_,1) ; Next = cell(_,_,2)),
+    \+ member(Next, Visited),
+    nextSnake(Grid, [Current|Visited], Next, Rest),
+    !.
 
 
 
@@ -93,19 +109,19 @@ count([], 0).
 count([Row|Grid], Count) :-
     count(Grid, C),
     rowCount(Row, Cr),
-    Count is C + Cr.
+    Count #= C + Cr.
 
 rowCount([], 0).
-rowCount([1|Row], Count) :- !,
-    rowCount(Row, C),
-    Count is C + 1.
-rowCount([2|Row], Count) :- !,
-    rowCount(Row, C),
-    Count is C + 1.
+rowCount([X|Xs], Count) :-
+    % Reify whether X is 1 or 2 into a boolean
+    (X #= 1) #<==> B1,
+    (X #= 2) #<==> B2,
+    B #= B1 + B2,
+    rowCount(Xs, RestCount),
+    Count #= RestCount + B.
+
 rowCount([_|Row], Count) :-
     rowCount(Row, Count).
-
-
 
 %
 % END OF SNAKE CONNECTED PART
@@ -115,6 +131,7 @@ rowCount([_|Row], Count) :-
 %
 % INPUT GRID SANITY CHECK
 %
+
 goodGrid([]).
 goodGrid([Row|Grid]) :-
     goodRow(Row),
@@ -124,25 +141,27 @@ goodRow([]).
 goodRow([Cell|Row]) :- ((Cell #=0) #\/ (Cell #=1) #\/ (Cell #=2)), goodRow(Row).
 %goodRow([Cell|Row]) :- %((Cell #\=0) #/\ (Cell #\=1) #/\ (Cell #\=2)), fail.
 
-checkHead(Grid) :- countHead(Grid, Count), Count = 2.
+checkHead(Grid) :- countHead(Grid, Count), Count #= 2.
 
 countHead([],0).
 countHead([Row|Grid], Count) :-
     countHead(Grid, C),
     countHeadRow(Row, Cr),
-    Count is C + Cr,
+    Count #= C + Cr,
     Count #=< 2.
 
 countHeadRow([],0).
 countHeadRow([Cell|Row], Count) :-
-    Cell #= 1,
     countHeadRow(Row, C),
-    Count is C + 1,
+    B #<==> (Cell #= 1),
+    Count #= C + B,
     Count #=< 2.
+
     
 countHeadRow([Val|Row], Count) :-
     Val #\= 1,
     countHeadRow(Row, Count).
+
 
 %
 % END OF INPUT GRID SANITY CHECK
@@ -161,7 +180,7 @@ nonTouching([Row1, Row2 | Rows]) :-
 
 %base case
 nonTouching_rows(R1, R2) :- 
-    block_of_2([R1,R2]), % no 4 block of 2s (technically induced by no diag ?)
+    %block_of_2([R1,R2]), % no 4 block of 2s (technically induced by no diag ?)
     nothing_in_diag_of_1([R1,R2]),!. % no head/tail with something in diagonal
 
 nonTouching_rows([A1, A2 | AList], [B1, B2 | BList]) :- 
@@ -201,6 +220,7 @@ nothing_in_diag_of_1([[A1,A2],[B1,B2]]) :- A1 #\=1, A2 #\=1, B1 #\=1, B2 #\=1.
 %
 % COUNTING NEIGHBOURS PART
 %
+
 extend_grid(OldGrid,NewGrid) :-
     transpose(OldGrid,TransGrid),
     extend_grid_rows(TransGrid,RowTransGrid),
@@ -245,8 +265,6 @@ check_neighbors_pattern(Piece,N,E,S,W) :-
     count_cell(E,X2),
     count_cell(S,X3),
     count_cell(W,X4),
-    %write(Piece),
-    %count_piece_cell(Piece, Max_Neighbours),
     Piece #= X1+X2+X3+X4.
 
 
@@ -260,13 +278,13 @@ check_neighbors_pattern(Piece,N,E,S,W) :-
 
 %base
 check_neighbors_rows([_,A2], [B1,B2], [_, C2]) :-
-    check_neighbors_pattern(B2, A2, 0, C2, B1).
+    check_neighbors_pattern(B2, A2, 0, C2, B1), !.
 
 check_neighbors_rows([_,N,A3|RowA],[W,M,E|RowB],[_,S,C3|RowC]) :-
     check_neighbors_pattern(M,N,E,S,W),
     check_neighbors_rows([N,A3|RowA],[M,E|RowB],[S,C3|RowC]).
 
-countNeighbors2([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3).
+countNeighbors2([Row1, Row2, Row3]) :- check_neighbors_rows(Row1, Row2, Row3),!.
 
 countNeighbors2([Row1, Row2, Row3 | Rows]) :-
     check_neighbors_rows(Row1, Row2, Row3),
@@ -276,35 +294,35 @@ countNeighbors2([Row1, Row2, Row3 | Rows]) :-
 countNeighbors(Solution) :-
     extend_grid(Solution, Extended)
     , countNeighbors2(Extended)
-    , undo_extend(Extended, Solution)
+    , undo_extend(Extended, Solution),!
     .
-
 
 %
 % END OF COUNTING NEIGHBOURS PART
 %
 
+:- dynamic(cache_solution/2).
 
-%
-% MAIN PREDICATES
-%
 snake(RowClues, ColClues, Grid, Solution):-
     %write("copyGrid\n"),
     copyGrid(Grid, Solution),
     goodGrid(Solution),
     checkHead(Solution),
-    %write("checkRowClues\n"),
+    write("checkRowClues\n"),
     checkRowClues(Solution, RowClues),
-    %write("checkColClues\n"),
+    write("checkColClues\n"),
     checkColClues(Solution, ColClues),
-    %write("countNeighbors\n"),
+    write("countNeighbors\n"),
     countNeighbors(Solution),
-    %write("nonTouching\n"),
+    write("snakeConnected\n"),
+    snakeConnected(Solution),
+    write("nonTouching\n"),
     nonTouching(Solution),
-    %write("snakeConnected\n"),
-    snakeConnected(Solution)
-
+    \+ cache_solution(Grid,Solution),
+    assertz(cache_solution(Grid,Solution))
 .
+
+
 
 copyGrid([],[]).
 copyGrid([Row|G],[RowS|S]) :- copyRow(Row,RowS), copyGrid(G,S).
@@ -312,7 +330,7 @@ copyRow([],[]).
 
 % constraint the values
 copyRow([-1|R],[Cell_Value|S]) :- 
-                                Cell_Value in 0 \/ 2
+                                Cell_Value in {0,2}
                                 ,copyRow(R,S)
                                 , !.
 copyRow([Clue|R],[Clue|S]) :- copyRow(R,S).
