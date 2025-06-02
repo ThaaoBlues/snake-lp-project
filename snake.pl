@@ -1,5 +1,6 @@
 % LP PROJECT GROUP 29
 
+:- use_module(library(clpfd)).
 :- [tests].
 
 %
